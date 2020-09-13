@@ -11,7 +11,10 @@ const LinkTo = (props) => (
 export default LinkTo
 
 LinkTo.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
 }
 
 const LinkBtn = styled.button`
