@@ -15,9 +15,11 @@ const applicant = (state = initialState, action) => {
   switch (action.type) {
     case ADD_APPLICANT: {
       const { id, content } = action.payload
+      const allIds = [...state.allIds]
+      allIds.unshift(id)
       return {
         ...state,
-        allIds: [...state.allIds, id],
+        allIds,
         byIds: {
           ...state.byIds,
           [id]: {

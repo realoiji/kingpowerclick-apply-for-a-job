@@ -16,13 +16,9 @@ const Applicant = () => (
 
 // export default Applicant;
 
-const mapStateToProps = (state /* , ownProps */) => {
-  console.debug('state ::', state)
-  return {
-    applicants: getApplicantList(state),
-    // counter: state.counter
-  }
-}
+const mapStateToProps = (state /* , ownProps */) => ({
+  applicants: getApplicantList(state),
+})
 
 // const mapDispatchToProps = { addApplicant, updateApplicant, deleteApplicant };
 

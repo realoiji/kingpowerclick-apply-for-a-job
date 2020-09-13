@@ -7,27 +7,16 @@ import _ from 'lodash'
 import { chooseApplicant, deleteApplicant } from 'redux/actions'
 import { getApplicantList, getApplicantObjList } from 'redux/selectors'
 
-const LinkTo = (props) => (
-  <LinkBtn type="button" {...props}>
-    {props.children}
-  </LinkBtn>
-)
-const Button = (props) => (
-  <StyledBtn type="button" {...props}>
-    {props.children}
-  </StyledBtn>
-)
+import LinkTo from 'components/LinkTo'
+import Button from 'components/Button'
 
 const ApplicantList = (props) => {
   const [currentPage, setCurrentPage] = useState(1)
-  const [postPerPage, setPostPerPage] = useState(2)
+  const [postPerPage] = useState(5)
   const [selectedApplicantIds, setSelectedApplicantIds] = useState([])
   const { allIds, applicants } = props
   const pageTotal = Math.ceil(allIds.length / postPerPage)
   const splitPage = _.chunk(allIds, postPerPage)
-  console.debug('allIds ::', allIds)
-  console.debug('pageTotal ::', pageTotal)
-  console.debug('splitPage ::', splitPage)
   const postsCurrentPage = _.get(splitPage, currentPage - 1, [])
 
   // reset pagination after delete post
@@ -74,14 +63,12 @@ const ApplicantList = (props) => {
   }
 
   const handleDeleteAll = () => {
-    console.debug('handleDeleteAll ::', selectedApplicantIds)
     _.forEach(selectedApplicantIds, (value) => {
       handleDelete(value)
     })
   }
 
   const renderPagination = () => {
-    console.debug('pageTotal ::', pageTotal)
     const goToPrev = () => {
       if (currentPage > 1) {
         const prevPage = currentPage - 1
@@ -126,10 +113,16 @@ const ApplicantList = (props) => {
     )
   }
   const renderSectionPost = () => {
-    console.debug('renderSectionPost ::', postsCurrentPage)
     const loopPosts = postsCurrentPage.map((id) => {
       const data = applicants[id] || {}
-      const { firstName, lastName, gender, mobilePhone, nationality } = data
+      const {
+        firstName,
+        lastName,
+        gender,
+        mobileCountryCode,
+        mobilePhone,
+        nationality,
+      } = data
       return (
         <TableRow key={`applicant-${id}`}>
           <CheckBoxColumn>
@@ -139,9 +132,12 @@ const ApplicantList = (props) => {
               onChange={(e) => handleSelectItem(id, e.target.checked)}
             />
           </CheckBoxColumn>
-          <NameColumn>{`${id} ${firstName} ${lastName}`}</NameColumn>
+          <NameColumn>{`${firstName} ${lastName}`}</NameColumn>
           <GenderColumn>{gender}</GenderColumn>
-          <MobilePhoneColumn>{mobilePhone}</MobilePhoneColumn>
+          <MobilePhoneColumn>
+            {mobileCountryCode}
+            {mobilePhone}
+          </MobilePhoneColumn>
           <NationColumn>{nationality}</NationColumn>
           <ActionColumn>
             <LinkTo onClick={() => handleEdit(id)}>EDIT</LinkTo>/
@@ -210,13 +206,11 @@ const Column = styled.div`
   flex: 1 0 50%;
   max-width: 50%;
 
-  ${(props) => {
-    if (props.right) {
-      return `
-      justify-content: flex-end;
-      `
-    }
-  }}
+  ${(props) =>
+    props.right &&
+    `
+    justify-content: flex-end;
+  `}
 `
 
 const DataListContainer = styled.div`
@@ -257,44 +251,4 @@ const NationColumn = styled.div`
 const ActionColumn = styled.div`
   flex: 0 1 120px;
   text-align: center;
-`
-
-const LinkBtn = styled.button`
-  border: 1px solid transparent;
-  background-color: transparent;
-  outline: none;
-  cursor: pointer;
-  &:hover {
-    color: skyblue;
-  }
-  transition: all 0.2s ease;
-  ${(props) =>
-    props.isActive &&
-    `
-    color: skyblue;
-  `}
-  ${(props) =>
-    props.disabled &&
-    `
-    cursor: not-allowed;
-    color: grey;
-  `}
-  ${(props) =>
-    props.underline &&
-    `
-    text-decoration: underline;
-  `}
-`
-
-const StyledBtn = styled.button`
-  ${(props) =>
-    props.marginLeft &&
-    `
-  margin-left: 10px;
-`}
-  ${(props) =>
-    props.marginRight &&
-    `
-  margin-right: 10px;
-`}
 `
